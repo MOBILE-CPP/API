@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  cpp_sql:
+    image: mysql:5.6
+    restart: on-failure
+    container_name: cpp_sql
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_DATABASE: cpp
+      MYSQL_USER: owner
+      MYSQL_PASSWORD: owner
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - network
+    ports:
+      - "3406:3306"
+
+  cpp:
+    build: .
+    image: cpp_image
+    restart: on-failure
+    container_name: cpp_container
+    command: docker run -p 8080:8080 cpp_image
+    volumes:
+      - .:/app
+      - static_data:/app/static
+    networks:
+      - network
+    ports:
+      - "8480:8080"
+    depends_on:
+      - cpp_sql
+
+volumes:
+  db:
+  static_data:
+
+networks:
+  network:
+    external: false
