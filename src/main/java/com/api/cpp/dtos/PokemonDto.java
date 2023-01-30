@@ -13,6 +13,7 @@ public class PokemonDto {
     private String type;
     @NotNull
     private List<String> skills;
+    @NotNull
     private Long imageData;
     @NotBlank
     private String username;

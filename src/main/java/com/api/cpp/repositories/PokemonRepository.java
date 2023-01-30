@@ -14,10 +14,10 @@ public interface PokemonRepository extends JpaRepository<PokemonModel, UUID> {
     boolean existsByName(String name);
 
     @Query(value = "select name from pokemon where type like %?1%", nativeQuery = true)
-    Optional<List<Object[]>> findByTypeContainingIgnoreCase(String type);
+    Optional<Object[]> findByTypeContainingIgnoreCase(String type);
 
     @Query(value = "" +
             "select p.name from pokemon p inner join pokemon_model_skills ps where ps.skills like CONCAT('%',?1,'%') and p.id = ps.pokemon_model_id;",
             nativeQuery = true)
-    Optional<List<Object[]>> findBySkillContainingIgnoreCase(String skill);
+    Optional<Object[]> findBySkillContainingIgnoreCase(String skill);
 }

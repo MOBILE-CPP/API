@@ -52,7 +52,7 @@ public class PokemonController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(pokemonService.save(pokemonModel));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("É necessário informar o id da imagem.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A Imagem com o id informado não foi encontrada.");
         }
     }
 
@@ -74,8 +74,8 @@ public class PokemonController {
 
     @GetMapping("/search/type")
     public ResponseEntity<?> getPokemonByType(@RequestParam(value = "type") String type){
-        Optional<List<Object[]>> pokemonModelOptional = pokemonService.findByType(type);
-        if (pokemonModelOptional.get().isEmpty()) {
+        Optional<Object[]> pokemonModelOptional = pokemonService.findByType(type);
+        if (pokemonModelOptional.get().length == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tipo não encontrado.");
         }
 
@@ -84,8 +84,8 @@ public class PokemonController {
 
     @GetMapping("/search/skill")
     public ResponseEntity<?> getPokemonBySkill(@RequestParam(value = "skill") String skill){
-        Optional<List<Object[]>> pokemonModelOptional = pokemonService.findBySkill(skill);
-        if (pokemonModelOptional.get().isEmpty()) {
+        Optional<Object[]> pokemonModelOptional = pokemonService.findBySkill(skill);
+        if (pokemonModelOptional.get().length == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Habilidade não encontrada.");
         }
 
@@ -102,16 +102,32 @@ public class PokemonController {
         return ResponseEntity.status(HttpStatus.OK).body("Pokemon deletado com sucesso.");
     }
 
-    @PutMapping("/{id}")//atualizar pra poder pegar imagens
+    @PutMapping("/{id}")
     public ResponseEntity<Object> updatePokemon(@PathVariable(value = "id") UUID id,
                                                 @RequestBody @Valid PokemonDto pokemonDto){
         Optional<PokemonModel> pokemonModelOptional = pokemonService.findById(id);
         if (!pokemonModelOptional.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pokemon não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pokémon não encontrado.");
         }
+
+        if (pokemonService.existsByName(pokemonDto.getName())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflito: O nome do Pokémon já está sendo utilizado!");
+        }
+
         var pokemonModel = new PokemonModel();
-        BeanUtils.copyProperties(pokemonDto, pokemonModel);
-        pokemonModel.setId(pokemonModelOptional.get().getId());
-        return ResponseEntity.status(HttpStatus.OK).body(pokemonService.save(pokemonModel));
+        Optional<ImageData> imageDataOptional = imageDataService.findById(pokemonDto.getImageData());
+
+        if (imageDataOptional.isPresent()) {
+            pokemonModel.setId(pokemonModelOptional.get().getId());
+            pokemonModel.setName(pokemonDto.getName());
+            pokemonModel.setType(pokemonDto.getType());
+            pokemonModel.setSkills(pokemonDto.getSkills());
+            pokemonModel.setImageData(imageDataOptional.get());
+            pokemonModel.setUsername(pokemonDto.getUsername());
+
+            return ResponseEntity.status(HttpStatus.OK).body(pokemonService.save(pokemonModel));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A Imagem com o id informado não foi encontrada.");
+        }
     }
 }

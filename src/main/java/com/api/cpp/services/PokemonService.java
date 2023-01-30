@@ -41,11 +41,11 @@ public class PokemonService {
         return pokemonRepository.existsByName(name);
     }
 
-    public Optional<List<Object[]>> findByType(String type) {
+    public Optional<Object[]> findByType(String type) {
         return pokemonRepository.findByTypeContainingIgnoreCase(type);
     }
 
-    public Optional<List<Object[]>> findBySkill(String skill) {
+    public Optional<Object[]> findBySkill(String skill) {
         return pokemonRepository.findBySkillContainingIgnoreCase(skill);
     }
 }

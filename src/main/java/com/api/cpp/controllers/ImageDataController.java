@@ -1,8 +1,13 @@
 package com.api.cpp.controllers;
 
 import com.api.cpp.models.ImageData;
+import com.api.cpp.models.PokemonModel;
 import com.api.cpp.services.ImageDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +31,15 @@ public class ImageDataController {
                 .body(response);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<ImageData>> getAllImages(
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ){
+        return ResponseEntity.status(HttpStatus.OK).body(imageDataService.findAll(pageable));
+    }
+
     @GetMapping("/info/{id}")
-    public ResponseEntity<?>  getImageInfoByName(@PathVariable("id") Long id) {
+    public ResponseEntity<?>  getImageInfoById(@PathVariable("id") Long id) {
         ImageData image = imageDataService.getInfoByImageById(id);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -35,7 +47,7 @@ public class ImageDataController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?>  getImageByName(@PathVariable("id") Long id) {
+    public ResponseEntity<?>  getImageById(@PathVariable("id") Long id) {
         byte[] image = imageDataService.getImage(id);
 
         return ResponseEntity.status(HttpStatus.OK)
