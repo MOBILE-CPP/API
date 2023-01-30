@@ -13,7 +13,7 @@ Após buildar a imagem, é necessário executá-la, criando o container. Nesse s
 Agora os containeres estão rodando e você pode utilizar o sistema apontando para http://localhost:8480.
 
 ## Endpoints
-Para acessar os recursos do sistema, você precisa saber os métodos HTTP e URLs disponíveis. Além disso, muito importante: para salvar um Pokémon, é preciso primeiro salvar a imagem dele! Utilize o POST descrito abaixo para salvar a imagem, que irá retornar o ID da imagem salva. Utilize o ID retornado para criar o Pok
+Para acessar os recursos do sistema, você precisa saber os métodos HTTP e URLs disponíveis. Além disso, muito importante: para salvar um Pokémon, é preciso primeiro salvar a imagem dele! Utilize o POST descrito abaixo para salvar a imagem, que irá retornar o ID da imagem salva. Utilize o ID retornado para criar o Pokémon!
 
 ### Image
 
