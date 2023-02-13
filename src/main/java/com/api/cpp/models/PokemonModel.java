@@ -63,8 +63,8 @@ public class PokemonModel implements Serializable {
         this.skills = skills;
     }
 
-    public ImageData getImageData() {
-        return imageData;
+    public Long getImageData() {
+        return imageData.getId();
     }
 
     public void setImageData(ImageData imageData) {
