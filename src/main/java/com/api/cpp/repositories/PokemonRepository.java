@@ -1,6 +1,8 @@
 package com.api.cpp.repositories;
 
 import com.api.cpp.models.PokemonModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,4 +22,6 @@ public interface PokemonRepository extends JpaRepository<PokemonModel, UUID> {
             "select p.name from pokemon p inner join pokemon_model_skills ps where ps.skills like CONCAT('%',?1,'%') and p.id = ps.pokemon_model_id;",
             nativeQuery = true)
     Optional<Object[]> findBySkillContainingIgnoreCase(String skill);
+
+    Page<PokemonModel> findAll(Pageable pageable);
 }

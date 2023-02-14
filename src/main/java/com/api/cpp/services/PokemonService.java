@@ -24,9 +24,7 @@ public class PokemonService {
         return pokemonRepository.save(pokemonModel);
     }
 
-    public Page<PokemonModel> findAll(Pageable pageable) {
-        return pokemonRepository.findAll(pageable);
-    }
+    public Page<PokemonModel> findAll(Pageable pageable) { return pokemonRepository.findAll(pageable); }
 
     public Optional<PokemonModel> findById(UUID id) {
         return pokemonRepository.findById(id);
@@ -45,7 +43,5 @@ public class PokemonService {
         return pokemonRepository.findByTypeContainingIgnoreCase(type);
     }
 
-    public Optional<Object[]> findBySkill(String skill) {
-        return pokemonRepository.findBySkillContainingIgnoreCase(skill);
-    }
+    public Optional<Object[]> findBySkill(String skill) { return pokemonRepository.findBySkillContainingIgnoreCase(skill); }
 }
