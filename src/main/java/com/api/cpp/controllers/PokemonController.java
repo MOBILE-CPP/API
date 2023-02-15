@@ -94,7 +94,10 @@ public class PokemonController {
                     ));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pokemonModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ObjectMapper().writeValueAsString(
+                        Collections.singletonMap("nomes", pokemonModelOptional.get())
+                ));
     }
 
     @GetMapping("/search/skill")
@@ -107,7 +110,10 @@ public class PokemonController {
                     ));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(pokemonModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ObjectMapper().writeValueAsString(
+                        Collections.singletonMap("nomes", pokemonModelOptional.get())
+                ));
     }
 
     @DeleteMapping("/{id}")
