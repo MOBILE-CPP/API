@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,8 +24,8 @@ public class AuthService {
         return authRepository.save(authModel);
     }
 
-    public Page<AuthModel> findAll(Pageable pageable) {
-        return authRepository.findAll(pageable);
+    public List<AuthModel> findAll() {
+        return authRepository.findAll();
     }
 
     public Optional<AuthModel> findById(UUID id) {

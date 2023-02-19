@@ -1,16 +1,13 @@
 package com.api.cpp.controllers;
 
 import com.api.cpp.dtos.AuthDto;
+import com.api.cpp.models.ApiResponse;
 import com.api.cpp.models.AuthModel;
 import com.api.cpp.services.AuthService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,40 +30,38 @@ public class AuthController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveAuth(@RequestBody @Valid AuthDto authDto) throws JsonProcessingException {
-        if(authService.existsByLogin(authDto.getLogin())){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ObjectMapper().writeValueAsString(
-                            Collections.singletonMap("message", "Conflito: Login já está sendo utilizado!")
-                    ));
+    public ResponseEntity<Object> saveAuth(@RequestBody @Valid AuthDto authDto) {
+        if (authService.existsByLogin(authDto.getLogin())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ApiResponse(HttpStatus.CONFLICT.value(), "Login já está sendo utilizado!", null));
         }
-        if(authService.existsByPassword(authDto.getPassword())){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ObjectMapper().writeValueAsString(
-                            Collections.singletonMap("message", "Conflito: Senha já está sendo utilizada!")
-                    ));
+        
+        // aconselho aapgar este if
+        if (authService.existsByPassword(authDto.getPassword())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ApiResponse(HttpStatus.CONFLICT.value(), "Senha já está sendo utilizada!", null));
         }
 
-        var authModel = new AuthModel();
+        AuthModel authModel = new AuthModel();
         BeanUtils.copyProperties(authDto, authModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.save(authModel));
+        AuthModel savedAuth = authService.save(authModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ApiResponse(HttpStatus.CREATED.value(), "Autenticação criada com sucesso!", savedAuth));
     }
 
     @PostMapping("/login")
     public ResponseEntity<Object> loginAuth(@RequestBody @Valid AuthDto authDto) throws JsonProcessingException {
         if(authService.existsByLogin(authDto.getLogin()) && authService.existsByPassword(authDto.getPassword())){
-            return ResponseEntity.status(HttpStatus.OK).body(authDto);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.ACCEPTED.value(),"Login Realizaado com sucesso!",authDto));
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ObjectMapper().writeValueAsString(
-                        Collections.singletonMap("message", "Login ou Senha incorretos.")
-                ));
+                .body(new ApiResponse(HttpStatus.NOT_FOUND.value(),"Login ou Senha incorretos.",null));
     }
 
     @GetMapping
-    public ResponseEntity<Page<AuthModel>> getAllAuth(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.status(HttpStatus.OK).body(authService.findAll(pageable));
+    public ResponseEntity<Object> getAllAuth(){
+    	return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(200,"Lista de todos os usuarios",authService.findAll()));
     }
 
     @GetMapping("/{id}")

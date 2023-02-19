@@ -6,6 +6,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "AUTH")
 public class AuthModel implements Serializable {
@@ -13,10 +15,13 @@ public class AuthModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @JsonProperty
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @JsonProperty
     @Column(nullable = false, length = 11)
     private String login;
+    @JsonProperty
     @Column(nullable = false)
     private String password;
 
